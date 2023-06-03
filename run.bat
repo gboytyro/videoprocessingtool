@@ -1,3 +1,3 @@
 @echo off
-python con.py
+python run.py
 pause
