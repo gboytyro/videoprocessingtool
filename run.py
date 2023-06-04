@@ -27,9 +27,9 @@ def process_video():
     output_file = os.path.join(output_dir, f"{output_name}.mp4")
 
     create_video(png_sequence_folder, video_file, output_file)
-    add_audio(video_file, output_file)
+    new_output_file = add_audio(video_file, output_file, output_name)
 
-    messagebox.showinfo("Success", f"Video processing complete. Output file saved as:\n\n{output_file}")
+    messagebox.showinfo("Success", f"Video processing complete. Output file saved as:\n\n{new_output_file}")
 
 def create_video(png_sequence_folder, video_file, output_file):
     try:
@@ -43,16 +43,22 @@ def create_video(png_sequence_folder, video_file, output_file):
     except Exception as e:
         print("Error:", e)
 
-def add_audio(video_file, output_file):
+def add_audio(video_file, output_file, output_name):
     try:
+        # Generate the new output file name
+        output_dir = os.path.dirname(output_file)
+        new_output_file = os.path.join(output_dir, f"{output_name}_audio.mp4")
+
         cmd = [
             'ffmpeg', '-i', output_file,
             '-i', video_file, '-c:v', 'copy', '-c:a', 'aac', '-map', '0:v:0', '-map', '1:a:0',
-            '-shortest', '-y', output_file
+            '-shortest', '-y', new_output_file
         ]
         subprocess.run(cmd)
+        return new_output_file
     except Exception as e:
         print("Error:", e)
+        return None
 
 def get_frame_rate(video_file):
     try:
